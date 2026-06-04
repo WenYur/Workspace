@@ -1,0 +1,35 @@
+<!-- feat(ui-lib): ui-button template with spinner and accessible states -->
+<button
+  [class]="'inline-flex items-center justify-center gap-2 font-semibold rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f] ' + variantClasses + ' ' + sizeClasses + ' ' + stateClasses"
+  [disabled]="disabled() || loading()"
+  (click)="handleClick()"
+  type="button"
+  [attr.aria-busy]="loading()"
+  [attr.aria-disabled]="disabled()"
+>
+  @if (loading()) {
+    <!-- Spinner SVG: animado con Tailwind animate-spin -->
+    <svg
+      class="animate-spin h-4 w-4 shrink-0"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        class="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+      />
+      <path
+        class="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+      />
+    </svg>
+  }
+  <span>{{ label() }}</span>
+</button>

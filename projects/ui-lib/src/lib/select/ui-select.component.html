@@ -1,0 +1,48 @@
+<!-- feat(ui-lib): ui-select template with skeleton loading state -->
+<div class="flex flex-col gap-1 w-full">
+  <!-- Label accesible vinculado al select o al skeleton -->
+  <label
+    [for]="loading() ? '' : 'ui-select-' + label()"
+    class="text-sm font-medium text-[#8892b0] uppercase tracking-wider"
+  >
+    {{ label() }}
+  </label>
+
+  @if (loading()) {
+    <!-- Skeleton: simula el select mientras se cargan las opciones -->
+    <div
+      class="h-10 w-full rounded-md bg-[#1a1a2e] animate-pulse border border-[#00ff41]/20"
+      role="status"
+      aria-label="Cargando opciones..."
+    ></div>
+  } @else {
+    <!-- Select nativo estilizado con tema Rick & Morty -->
+    <select
+      [id]="'ui-select-' + label()"
+      [disabled]="disabled()"
+      [value]="value() ?? ''"
+      (change)="onSelectChange($event)"
+      [class]="
+        'w-full h-10 px-3 rounded-md border text-[#e0e0e0] text-sm transition-all duration-200 ' +
+        'bg-[#1a1a2e] border-[#00ff41]/40 ' +
+        'focus:outline-none focus:ring-2 focus:ring-[#00ff41]/60 focus:border-[#00ff41] ' +
+        'hover:border-[#00ff41]/70 ' +
+        (disabled() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer')
+      "
+      [attr.aria-label]="label()"
+    >
+      <!-- Opción vacía = placeholder -->
+      <option value="" class="bg-[#0a0a0f]">{{ placeholder() }}</option>
+
+      @for (option of options(); track option.value) {
+        <option
+          [value]="option.value"
+          [selected]="value() === option.value"
+          class="bg-[#0a0a0f] text-[#e0e0e0]"
+        >
+          {{ option.label }}
+        </option>
+      }
+    </select>
+  }
+</div>

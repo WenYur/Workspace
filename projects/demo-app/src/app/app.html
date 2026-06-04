@@ -1,0 +1,73 @@
+<!-- feat(demo-app): app template — Rick & Morty explorer layout -->
+
+<!-- ─── HEADER ──────────────────────────────────────────────────────────── -->
+<header class="w-full py-8 px-6 text-center border-b border-[#00ff41]/20 bg-[#0f3460]/40">
+  <div class="max-w-5xl mx-auto">
+    <h1
+      class="text-4xl md:text-5xl font-bold text-[#00ff41] tracking-widest uppercase"
+      style="font-family: 'Orbitron', sans-serif;"
+    >
+      Rick &amp; Morty Explorer
+    </h1>
+    <p class="mt-2 text-[#8892b0] text-sm tracking-wide">
+      Explora personajes, episodios y ubicaciones del universo Rick &amp; Morty
+    </p>
+  </div>
+</header>
+
+<!-- ─── MAIN ────────────────────────────────────────────────────────────── -->
+<main class="max-w-5xl mx-auto px-4 py-8 space-y-6">
+
+  <!-- Barra de controles: selects de recurso y status -->
+  <section
+    class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-[#1a1a2e] border border-[#00ff41]/10"
+    aria-label="Controles de filtrado"
+  >
+    <!-- Select: recurso activo -->
+    <ui-select
+      label="Recurso"
+      [options]="resourceOptions"
+      [(value)]="selectedResource"
+      (selectionChange)="onResourceChange($event)"
+    />
+
+    <!-- Select: filtro de status — solo activo para 'character' -->
+    <ui-select
+      label="Estado"
+      [options]="statusOptions"
+      [(value)]="selectedStatus"
+      placeholder="Todos los estados"
+      [disabled]="!isStatusEnabled()"
+      [loading]="resourceService.loading() && isStatusEnabled()"
+      (selectionChange)="onStatusChange($event)"
+    />
+  </section>
+
+  <!-- Estadística de resultados -->
+  @if (!resourceService.loading() && !resourceService.error() && resourceService.rows().length > 0) {
+    <p class="text-xs text-[#8892b0] px-1">
+      {{ resourceService.rows().length }} resultados en esta página
+    </p>
+  }
+
+  <!-- Tabla genérica conectada al servicio -->
+  <section aria-label="Resultados">
+    <ui-table
+      [columns]="activeColumns()"
+      [rows]="resourceService.rows()"
+      [loading]="resourceService.loading()"
+      [errorMessage]="resourceService.error()"
+      emptyMessage="No se encontraron resultados. Intenta con otro filtro."
+      (actionTriggered)="handleAction($event)"
+    />
+  </section>
+
+</main>
+
+<!-- ─── MODAL DE DETALLE ─────────────────────────────────────────────────── -->
+@if (selectedRow()) {
+  <app-resource-modal
+    [row]="selectedRow()!"
+    (closeModal)="closeModal()"
+  />
+}

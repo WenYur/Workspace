@@ -1,0 +1,71 @@
+/* feat(demo-app): global styles with Tailwind directives and Rick & Morty theme */
+
+/* ─── TAILWIND DIRECTIVES ─────────────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── BASE ────────────────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #0a0a0f;
+    color: #e0e0e0;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar personalizada verde portal */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1a1a2e;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #00ff41;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00cc34;
+  }
+}
+
+/* ─── COMPONENTS ─────────────────────────────────────────────────────────── */
+@layer components {
+  /* Animación de entrada para secciones de datos */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* ─── UTILITIES ───────────────────────────────────────────────────────────── */
+@layer utilities {
+  .glow-green {
+    box-shadow: 0 0 12px rgba(0, 255, 65, 0.4);
+  }
+}

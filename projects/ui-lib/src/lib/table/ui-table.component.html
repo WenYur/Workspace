@@ -1,0 +1,100 @@
+<!-- feat(ui-lib): ui-table template with 3 visual states: loading, empty, error -->
+
+<!-- Estado: ERROR — banner rojo sobre toda la tabla -->
+@if (errorMessage()) {
+  <div
+    class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#e94560]/15 border border-[#e94560]/40 text-[#e94560] text-sm"
+    role="alert"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+    </svg>
+    <span>{{ errorMessage() }}</span>
+  </div>
+} @else {
+  <div class="overflow-x-auto rounded-xl border border-[#00ff41]/20">
+    <table class="w-full text-sm text-left text-[#e0e0e0]">
+      <!-- Cabecera -->
+      <thead class="bg-[#0f3460] text-[#00ff41] uppercase text-xs tracking-wider">
+        <tr>
+          @for (col of columns(); track col.key) {
+            <th class="px-4 py-3 font-semibold whitespace-nowrap">{{ col.header }}</th>
+          }
+          <th class="px-4 py-3 font-semibold text-right">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-[#00ff41]/10">
+
+        <!-- Estado: LOADING — 5 filas skeleton con efecto pulse -->
+        @if (loading()) {
+          @for (skeleton of skeletonRows; track $index) {
+            <tr class="bg-[#16213e]">
+              @for (col of columns(); track col.key) {
+                <td class="px-4 py-3">
+                  <div class="h-4 rounded bg-[#0f3460] animate-pulse"></div>
+                </td>
+              }
+              <!-- Skeleton de la columna de acciones -->
+              <td class="px-4 py-3">
+                <div class="h-4 w-28 rounded bg-[#0f3460] animate-pulse ml-auto"></div>
+              </td>
+            </tr>
+          }
+        }
+
+        <!-- Estado: DATOS — filas reales con acciones -->
+        @if (!loading() && rows().length > 0) {
+          @for (row of rows(); track $index) {
+            <tr class="bg-[#16213e] hover:bg-[#0f3460] transition-colors duration-150">
+              @for (col of columns(); track col.key) {
+                <td class="px-4 py-3 text-[#e0e0e0]">
+                  {{ getCellValue(row, col.key) ?? '—' }}
+                </td>
+              }
+              <td class="px-4 py-3">
+                <div class="flex gap-2 justify-end">
+                  <!-- Botón Ver -->
+                  <button
+                    (click)="emitView(row)"
+                    class="px-3 py-1 text-xs rounded border border-[#00ff41]/50 text-[#00ff41] hover:bg-[#00ff41]/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#00ff41]"
+                    type="button"
+                  >
+                    Ver
+                  </button>
+                  <!-- Botón Eliminar -->
+                  <button
+                    (click)="emitDelete(row)"
+                    class="px-3 py-1 text-xs rounded border border-[#e94560]/50 text-[#e94560] hover:bg-[#e94560]/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#e94560]"
+                    type="button"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+
+        <!-- Estado: VACÍO — ícono de portal + mensaje -->
+        @if (!loading() && rows().length === 0 && !errorMessage()) {
+          <tr class="bg-[#16213e]">
+            <td [colSpan]="columns().length + 1" class="px-4 py-12 text-center">
+              <div class="flex flex-col items-center gap-3 text-[#8892b0]">
+                <!-- Portal SVG: ícono temático Rick & Morty -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-[#00ff41]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <circle cx="12" cy="12" r="9" stroke-width="1.5" />
+                  <circle cx="12" cy="12" r="5" stroke-width="1.5" stroke-dasharray="3 2"/>
+                  <circle cx="12" cy="12" r="2" stroke-width="1.5" fill="currentColor"/>
+                </svg>
+                <p class="text-sm">{{ emptyMessage() }}</p>
+              </div>
+            </td>
+          </tr>
+        }
+
+      </tbody>
+    </table>
+  </div>
+}
